@@ -12,11 +12,9 @@
 // shared SCC features
 void scc_core::tick()
 {
-	m_out = 0;
 	for (auto &elem : m_voice)
 	{
 		elem.tick();
-		m_out += elem.out();
 	}
 }
 
@@ -66,7 +64,6 @@ void scc_core::reset()
 	}
 
 	m_test.reset();
-	m_out = 0;
 	std::fill(m_reg.begin(), m_reg.end(), 0);
 }
 

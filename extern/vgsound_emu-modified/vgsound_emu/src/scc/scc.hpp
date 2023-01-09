@@ -137,7 +137,6 @@ class scc_core : public vgsound_emu_core
 			: vgsound_emu_core(tag)
 			, m_voice{*this, *this, *this, *this, *this}
 			, m_test(test_t())
-			, m_out(0)
 		{
 			m_reg.fill(0);
 		}
@@ -153,12 +152,8 @@ class scc_core : public vgsound_emu_core
 		virtual void reset();
 		void tick();
 
-		// getters
-		inline s32 out() { return m_out; }	// output to DA0...DA10 pin
-
 		inline u8 reg(u8 address) { return m_reg[address]; }
 
-		// for preview
 		inline s32 voice_out(u8 voice) { return (voice < 5) ? m_voice[voice].out() : 0; }
 
 	protected:
@@ -171,7 +166,6 @@ class scc_core : public vgsound_emu_core
 		std::array<voice_t, 5> m_voice;	 // 5 voices
 
 		test_t m_test;					// test register
-		s32 m_out				  = 0;	// output to DA0...10
 
 		std::array<u8, 256> m_reg;  // register pool
 };

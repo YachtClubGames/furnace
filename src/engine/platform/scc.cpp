@@ -85,11 +85,13 @@ void DivPlatformSCC::acquire(short* bufL, short* bufR, size_t start, size_t len)
     for (int i=0; i<16; i++) {
       scc->tick();
     }
-    short out=(short)scc->out()<<5;
-    bufL[h]=bufR[h]=out;
 
+    bufL[h]=bufR[h]=0;
     for (int i=0; i<5; i++) {
-      oscBuf[i]->data[oscBuf[i]->needle++]=scc->voice_out(i)<<7;
+      short v = scc->voice_out(i);
+      bufL[h]+=(v*chan[i].panL)>>3;
+      bufR[h]+=(v*chan[i].panR)>>3;
+      oscBuf[i]->data[oscBuf[i]->needle++]=v<<7;
     }
   }
 }
@@ -215,6 +217,10 @@ int DivPlatformSCC::dispatch(DivCommand c) {
       chan[c.chan].pitch=c.value;
       chan[c.chan].freqChanged=true;
       break;
+    case DIV_CMD_PANNING:
+      chan[c.chan].panL=c.value;
+      chan[c.chan].panR=c.value2;
+      break;
     case DIV_CMD_WAVE:
       chan[c.chan].wave=c.value;
       chan[c.chan].ws.changeWave1(chan[c.chan].wave);
@@ -336,7 +342,7 @@ void DivPlatformSCC::reset() {
 }
 
 bool DivPlatformSCC::isStereo() {
-  return false;
+  return true;
 }
 
 void DivPlatformSCC::notifyWaveChange(int wave) {
